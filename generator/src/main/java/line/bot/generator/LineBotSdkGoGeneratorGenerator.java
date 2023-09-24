@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.openapitools.codegen.languages;
+package line.bot.generator;
 
 import com.google.common.collect.Iterables;
 import com.samskivert.mustache.Mustache;
@@ -44,14 +44,55 @@ import java.util.*;
 import static org.openapitools.codegen.utils.CamelizeOption.LOWERCASE_FIRST_LETTER;
 import static org.openapitools.codegen.utils.StringUtils.camelize;
 
+import org.openapitools.codegen.*;
+import org.openapitools.codegen.model.*;
+import org.openapitools.codegen.languages.*;
+import io.swagger.models.properties.*;
+
 // https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractGoCodegen.java
 // https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/GoClientCodegen.java
 public class LineBotSdkGoGeneratorGenerator extends GoClientCodegen implements CodegenConfig {
 
-    public LineBotSdkGoGeneratorGenerator() {
-        super();
-        embeddedTemplateDir = templateDir = "line-bot-sdk-go-generator";
+  public LineBotSdkGoGeneratorGenerator() {
+    super();
+    embeddedTemplateDir = templateDir = "line-bot-sdk-go-generator";
+  }
+
+  /**
+   * Configures a friendly name for the generator.  This will be used by the generator
+   * to select the library with the -g flag.
+   *
+   * @return the friendly name for the generator
+   */
+  public String getName() {
+    return "line-bot-sdk-go-generator";
+  }
+
+
+  @Override
+  public Map<String, ModelsMap> postProcessAllModels(Map<String, ModelsMap> objs) {
+    Map<String, ModelsMap> result = super.postProcessAllModels(objs);
+
+    for (ModelsMap entry : result.values()) {
+      for (ModelMap mo : entry.getModels()) {
+        CodegenModel cm = mo.getModel();
+
+        if (cm.getParentModel() != null) {
+          CodegenDiscriminator discriminator = cm.getParentModel().getDiscriminator();
+          Optional<String> mappingNameOptional = discriminator.getMappedModels().stream().filter(
+            it -> it.getModelName().equals(cm.name)
+          ).map(CodegenDiscriminator.MappedModel::getMappingName).findFirst();
+          mappingNameOptional.ifPresent(mappingName -> {
+            Map<String, Object> selector = new HashMap<>();
+            selector.put("propertyName", discriminator.getPropertyName());
+            selector.put("mappingName", mappingName);
+            cm.getVendorExtensions().put("x-selector", selector);
+          });
+        }
+      }
     }
+    return result;
+  }
     // private final Logger LOGGER = LoggerFactory.getLogger(GoClientCodegen.class);
     // protected String packageVersion = "1.0.0";
     // protected String apiDocPath = "docs/";
