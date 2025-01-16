@@ -42,7 +42,6 @@ type ManageAudienceBlobAPI struct {
 	endpoint     *url.URL
 	channelToken string
 	ctx          context.Context
-	a string
 }
 
 // ManageAudienceBlobAPIOption type
