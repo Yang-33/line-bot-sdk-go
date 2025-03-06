@@ -22,8 +22,8 @@ jobs:
               languageName: 'Node.js',
               eolJsonUrl: 'https://endoflife.date/api/nodejs.json',
               eolViewUrl: 'https://endoflife.date/nodejs',
-              eolLookbackDays: 100,
-              newReleaseThresholdDays: 100,
+              eolLookbackDays: 1000,
+              newReleaseThresholdDays: 1000,
               ltsOnly: false,
               retryCount: 3,
               retryIntervalSec: 30
