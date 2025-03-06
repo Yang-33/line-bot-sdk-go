@@ -20,7 +20,7 @@ jobs:
             const checkEolAndNewReleases = require('.github/scripts/check-eol-newrelease.js');
             await checkEolAndNewReleases({ github, context, core }, {
               languageName: 'Go',
-              eolJsonUrl: 'https://endoflife.date/go.json',
+              eolJsonUrl: 'https://endoflife.date/api/go.json',
               eolViewUrl: 'https://endoflife.date/go',
               eolLookbackDays: 100,
               newReleaseThresholdDays: 100,
