@@ -34,7 +34,7 @@
  * @param {import('@actions/github-script').AsyncFunctionArguments} actionCtx
  * @param {EolNewReleaseConfig} config
  */
-const checkEolAndNewReleases = async (actionCtx, config) => {
+module.exports = async function checkEolAndNewReleases(actionCtx, config) {
     const { github, context, core } = actionCtx;
     const {
         languageName,
@@ -223,5 +223,3 @@ const checkEolAndNewReleases = async (actionCtx, config) => {
         core.setFailed(err.message);
     }
 };
-
-export default checkEolAndNewReleases;
