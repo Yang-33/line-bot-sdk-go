@@ -31,6 +31,9 @@
  *   - New releases within newReleaseThresholdDays
  * If fetching fails after multiple retries, an error Issue is created once per week.
  *
+ * Note this script is used in a GitHub Action workflow, and some line/line-bot-sdk-* repositories.
+ * If you modify this script, please consider syncing the changes to other repositories.
+ *
  * @param {import('@actions/github-script').AsyncFunctionArguments} actionCtx
  * @param {EolNewReleaseConfig} config
  */
@@ -155,12 +158,12 @@ module.exports = async function checkEolAndNewReleases(actionCtx, config) {
                 // Check if it reached EoL within the last eolLookbackDays
                 if (eolDate <= now && eolDate >= eolLookbackDate) {
                     if (!release.cycle) return;
-                    const title = `[EoL] ${languageName} ${release.cycle} reached End of Life!`;
+                    const title = `[EoL] ${languageName} ${release.cycle} reached End of Life`;
                     const body = dedent(`
                         **EoL date**: ${release.eol}
                         endoflife.date for ${languageName}: ${eolViewUrl}
             
-                        This version has reached End of Life.
+                        This version(${languageName} ${release.cycle}) has reached End of Life.
                         Please consider drop support or update as needed.
                         `);
                     await createIssueIfNotExists(title, body, ['keep']);
@@ -186,12 +189,13 @@ module.exports = async function checkEolAndNewReleases(actionCtx, config) {
                 // Check if releaseDate is within newReleaseThresholdDays
                 if (rDate >= newReleaseSince && rDate <= now) {
                     if (!release.cycle) return;
-                    const title = `[New Release] ${languageName} ${release.cycle} is now available!`;
+                    const ltsTag = ltsOnly ? ' (LTS)' : '';
+                    const title = `[New Release] ${languageName} ${release.cycle}${ltsTag} is now available`;
                     const body = dedent(`
                         **Release date**: ${release.releaseDate}
                         endoflife.date for ${languageName}: ${eolViewUrl}
             
-                        A new version has been released.
+                        A new version(${languageName} ${release.cycle}) has been released.
                         Please consider updating or testing as needed.
                         `);
                     await createIssueIfNotExists(title, body, ['keep']);
