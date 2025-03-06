@@ -7,7 +7,7 @@
  * @property {string|boolean} [eol] - End of Life date (YYYY-MM-DD) or false if not EoL
  * @property {string} [latest] - Latest release in this cycle
  * @property {string|null} [link] - Link to changelog or similar, if available
- * @property {boolean|string} [lts] - Whether this cycle is LTS (true), non-LTS (false), or LTS starting on a given date
+ * @property {boolean|string} [lts] - Whether this cycle is non-LTS (false), or LTS starting on a given date
  * @property {string|boolean} [support] - Active support date (YYYY-MM-DD) or boolean
  * @property {string|boolean} [discontinued] - Discontinued date (YYYY-MM-DD) or boolean
  */
@@ -145,7 +145,10 @@ module.exports = async function checkEolAndNewReleases(actionCtx, config) {
      * @param {Date} eolLookbackDate
      */
     const checkEoL = async (release, now, eolLookbackDate) => {
-        if (ltsOnly && release.lts !== true) return;
+        if (ltsOnly && release.lts === false) {
+            core.info(`Skipping non-LTS release: ${release.cycle}`);
+            return;
+        }
         if (typeof release.eol === 'string') {
             const eolDate = new Date(release.eol);
             if (!isNaN(eolDate.getTime())) {
@@ -173,7 +176,10 @@ module.exports = async function checkEolAndNewReleases(actionCtx, config) {
      * @param {Date} newReleaseSince
      */
     const checkNewRelease = async (release, now, newReleaseSince) => {
-        if (ltsOnly && release.lts !== true) return;
+        if (ltsOnly && release.lts === false) {
+            core.info(`Skipping non-LTS release: ${release.cycle}`);
+            return;
+        }
         if (typeof release.releaseDate === 'string') {
             const rDate = new Date(release.releaseDate);
             if (!isNaN(rDate.getTime())) {
@@ -205,6 +211,7 @@ module.exports = async function checkEolAndNewReleases(actionCtx, config) {
     try {
         const data = await fetchWithRetry(eolJsonUrl);
         for (const release of data) {
+            core.info(`Checking release: ${JSON.stringify(release)}`);
             await checkEoL(release, now, eolLookbackDate);
             await checkNewRelease(release, now, newReleaseSince);
         }
