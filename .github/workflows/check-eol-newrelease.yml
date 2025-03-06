@@ -24,7 +24,7 @@ jobs:
               eolViewUrl: 'https://endoflife.date/nodejs',
               eolLookbackDays: 1000,
               newReleaseThresholdDays: 1000,
-              ltsOnly: false,
+              ltsOnly: true,
               retryCount: 3,
               retryIntervalSec: 30
             });

@@ -152,7 +152,7 @@ module.exports = async function checkEolAndNewReleases(actionCtx, config) {
                 // Check if it reached EoL within the last eolLookbackDays
                 if (eolDate <= now && eolDate >= eolLookbackDate) {
                     if (!release.cycle) return;
-                    const title = `[EoL] ${languageName} ${release.cycle} reached End of Life`;
+                    const title = `[EoL] ${languageName} ${release.cycle} reached End of Life!`;
                     const body = dedent(`
                         **EoL date**: ${release.eol}
                         endoflife.date for ${languageName}: ${eolViewUrl}
@@ -180,7 +180,7 @@ module.exports = async function checkEolAndNewReleases(actionCtx, config) {
                 // Check if releaseDate is within newReleaseThresholdDays
                 if (rDate >= newReleaseSince && rDate <= now) {
                     if (!release.cycle) return;
-                    const title = `[New Release] ${languageName} ${release.cycle} is now available`;
+                    const title = `[New Release] ${languageName} ${release.cycle} is now available!`;
                     const body = dedent(`
                         **Release date**: ${release.releaseDate}
                         endoflife.date for ${languageName}: ${eolViewUrl}
